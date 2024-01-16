@@ -1,0 +1,25 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+	<head> 
+		<title> AI4BI </title>			 
+	</head> 
+	<body>
+        {{ table|safe }}
+        <a href="{{ url_for('upload_file') }}" class="btn btn-primary">Go to Homepage</a>
+        <h1>File {{name}} uploaded successfully.</h1>
+        <h2>The file is {{file_type}} seperated file.<h2>
+        <h2>The file is  encoded in {{default_encoding}} format.<h2>
+            <a href="{{ url_for('gen_bi',name=name) }}" class="btn btn-primary">Generate the Insights</a>
+		<div align="center"> 
+			<table> 
+				<h1> 
+				<!--Displaying the converted table-->
+					{% for table in tables %} 
+					<h2>{{titles[loop.index]}}</h2>							 
+					{{ table|safe }} 
+					{% endfor %}	 
+				</h1> 
+			</table> 
+		</div> 
+	</body> 
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+	<head> 
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+    
+            h1 {
+                text-align: center;
+            }
+    
+            #chart-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                gap: 10px; /* Adjust the gap between iframes */
+            }
+    
+            .chart {
+                /* flex: 1; */
+                max-width: calc(40% - 10px); /* Adjust the width of each iframe */
+            }
+    
+            @media only screen and (max-width: 768px) {
+                .chart {
+                    max-width: calc(50% - 10px); /* Change to 2 columns on smaller screens */
+                }
+            }
+    
+            @media only screen and (max-width: 480px) {
+                .chart {
+                    max-width: 100%; /* Change to 1 column on even smaller screens */
+                }
+            }
+        </style>
+		<title> AI4BI </title>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>			 
+	</head> 
+	<body>
+        <a href="{{ url_for('upload_file') }}" class="btn btn-primary">Go to Homepage</a>
+        <h4>Insights for file {{name}}.</h1>
+		<div align="left"> 
+			<ol> 
+                <!-- For loop logic of jinja template -->
+                {{ kpi_response }}  
+            </ol> 
+		</div> 
+        <div align="center"> 
+            <h1>Business Intelligence Charts</h1>
+            <div id="chart-container">
+                <!-- Render saved HTML charts using an iframe -->
+                {% for html_file in html_files %}
+                <div class="chart">
+                    <h2>{{ html_file.split("/")[-1].split(".")[0] }}</h2>
+                    <iframe src="{{ url_for('static', filename=html_file) }}" width="100%" height="500"></iframe>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+	</body> 
+</html>
