@@ -1,25 +1,35 @@
 <!DOCTYPE html> 
 <html lang="en"> 
-	<head> 
-		<title> AI4BI </title>			 
-	</head> 
-	<body>
+    <head> 
+        <title> AI4BI </title>    
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">         
+        <style>
+            /* Add this style to create a scrollable container for the table */
+            .table-container {
+                overflow: auto;
+                max-height: 400px; /* Set a maximum height for the scrollable area */
+            }
+        </style>
+    </head> 
+    <body>
         {{ table|safe }}
-        <a href="{{ url_for('upload_file') }}" class="btn btn-primary">Go to Homepage</a>
-        <h1>File {{name}} uploaded successfully.</h1>
-        <h2>The file is {{file_type}} seperated file.<h2>
-        <h2>The file is  encoded in {{default_encoding}} format.<h2>
-            <a href="{{ url_for('gen_bi',name=name) }}" class="btn btn-primary">Generate the Insights</a>
-		<div align="center"> 
-			<table> 
-				<h1> 
-				<!--Displaying the converted table-->
-					{% for table in tables %} 
-					<h2>{{titles[loop.index]}}</h2>							 
-					{{ table|safe }} 
-					{% endfor %}	 
-				</h1> 
-			</table> 
-		</div> 
-	</body> 
+        <a href="{{ url_for('upload_file') }}" class="button">Go to Homepage</a>
+        <h2>File {{name}} uploaded successfully.</h2>
+        <h5>The file is {{file_type}} separated file.</h5>
+        <h5>The file is encoded in {{default_encoding}} format.</h5>
+        <h5><a href="{{ url_for('gen_bi',name=name) }}" class="button">Generate the Insights</a></h5>
+        
+        <!-- Wrap the table in a scrollable container -->
+        <div align="center" class="table-container"> 
+            <table> 
+                <tr> 
+                    <!-- Displaying the converted table -->
+                    {% for table in tables %} 
+                        <td>{{ titles[loop.index] }}</td>							 
+                        {{ table|safe }} 
+                    {% endfor %}	 
+                </tr> 
+            </table> 
+        </div> 
+    </body> 
 </html>

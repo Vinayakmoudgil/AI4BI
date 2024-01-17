@@ -3,6 +3,7 @@
 	<head> 
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -40,7 +41,7 @@
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>			 
 	</head> 
 	<body>
-        <a href="{{ url_for('upload_file') }}" class="btn btn-primary">Go to Homepage</a>
+        <a href="{{ url_for('upload_file') }}" class="button">Go to Homepage</a>
         <h4>Insights for file {{name}}.</h1>
 		<div align="left"> 
 			<ol> 
