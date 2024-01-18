@@ -3,18 +3,21 @@ import os,shutil
 from werkzeug.utils import secure_filename
 from markupsafe import escape
 import pandas as pd
-from geminiAi import generate_kpi,generate_chart
+from geminiAi import generate_kpi,generate_chart,generate_imp_kpi_info
 import json
 import re
 from charts import bar_chart, line_chart, scatter_chart
+from timeit import default_timer as timer
+import configparser
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 
-file_storage_folder='C:/workdir/Practice_laptop_accion_2/Practice/rough/rough8/AI4BI/file_storage'
-file_chunck_path='C:/workdir/Practice_laptop_accion_2/Practice/rough/rough8/AI4BI/file_storage/file_chunk'
+file_storage_folder=config['PATHS']['FILE_STORAGE_FOLDER']
+file_chunck_path=config['PATHS']['FILE_CHUNCK_PATH']
 ALLOWED_EXTENSIONS = {'txt', 'csv', 'xlsx'}
-charts_storage='C:/workdir/Practice_laptop_accion_2/Practice/rough/rough8/AI4BI/static/charts_storage'
-charts_archive_storage='C:/workdir/Practice_laptop_accion_2/Practice/rough/rough8/AI4BI/static/charts_archive'
-
+charts_storage=config['PATHS']['CHARTS_STORAGE']
+charts_archive_storage=config['PATHS']['CHARTS_ARCHIVE_STORAGE']
 
 def get_json_ai(ai_response,start_ai,end_ai):
     try:
@@ -103,6 +106,10 @@ def upload_file():
 def DfViewer(name):
     file_type=f'comma'
     default_encoding='utf-8'
+    for filename in os.listdir(charts_storage):
+        file_path = os.path.join(charts_storage, filename)
+        archive_path=os.path.join(charts_archive_storage, filename)
+        shutil.move(file_path, archive_path)
     if name.endswith('xlsx'):
         file_type='Excel'
     elif name.endswith('csv'):
@@ -127,10 +134,9 @@ def DfViewer(name):
         else:
             df=pd.read_csv(os.path.join(file_chunck_path,chunk_file_name),encoding=default_encoding)
     except UnicodeDecodeError as unerr:
-        print("sagar"*100)
         default_encoding='latin-1'
         df=pd.read_csv(os.path.join(file_storage_folder,name), encoding=default_encoding)
-        
+    df.columns = df.columns.str.upper()
     return render_template('DataFrame.html', tables=[df.to_html()], name=name,file_type=file_type,default_encoding=default_encoding,titles=[''])
 
 @app.route('/genBi/<name>', methods=['GET', 'POST'])
@@ -139,46 +145,43 @@ def gen_bi(name):
         df =pd.read_csv(os.path.join(file_storage_folder,name))
     except UnicodeDecodeError as unerr:
         df=pd.read_csv(os.path.join(file_storage_folder,name),encoding='latin-1') 
+    df.columns = df.columns.str.upper()
     column_list=[x for x in df.columns]
-    ai_check=-1
-    while ai_check<0:
-        ai_response=generate_kpi(df_columns=column_list)
-        start_ai=ai_response.find('{')
-        end_ai=ai_response.rfind('}')
-        ai_check=get_json_ai(ai_response=ai_response,start_ai=start_ai,end_ai=end_ai)
-        print(f" The KPI response {ai_response}")
-    json_response=json.loads(ai_response[start_ai:end_ai+1]) 
-    json_keys_list=list(get_all_keys(json_response))
-    for json_metadata in json_keys_list:
-        if json_metadata.lower()=='kpis':
-            json_header=json_metadata
-        elif re.search('columns', json_metadata.lower()):
-            json_column=json_metadata
-        else:
-            json_kpi_key=json_metadata   
-    actual_display={}
-    print(f" The Actual KPI shown {json_response}")
-    for data in json_response[json_header]:
-        if len(data[json_column])>1:
-            actual_display[data[json_kpi_key]]=','.join(data[json_column])
-    # remove all the charts from the directory and create new ones as per the AI
-    try:
-        output=-1
-        while output<0:
-            for filename in os.listdir(charts_storage):
-                file_path = os.path.join(charts_storage, filename)
-                archive_path=os.path.join(charts_archive_storage, filename)
-                shutil.move(file_path, archive_path)
-            ai_chart_response=generate_chart(kpi_data=actual_display)
-            start_chart_ai=ai_chart_response.find('{')
-            end_chart_ai=ai_chart_response.rfind('}')
-            actual_chart_resp=json_response=json.loads(ai_chart_response[start_chart_ai:end_chart_ai+1])
-            print(f" The Actual chart shown {actual_chart_resp}")
-            output=get_charts_output(df=df,actual_resp=actual_chart_resp)
-    except Exception as e:
-        print(f"Got the below exception {str(e)}")
-        raise e
-
+    start_time=timer()
+    for i in range(0,3):
+        ai_check=-1
+        while ai_check<0:
+            ai_response=generate_kpi(df_columns=column_list)
+            start_ai=ai_response.find('{')
+            end_ai=ai_response.rfind('}')
+            ai_check=get_json_ai(ai_response=ai_response,start_ai=start_ai,end_ai=end_ai)
+            print(f" The KPI response {ai_response}")
+        json_response=json.loads(ai_response[start_ai:end_ai+1]) 
+        json_keys_list=list(get_all_keys(json_response))
+        for json_metadata in json_keys_list:
+            if json_metadata.lower()=='kpis':
+                json_header=json_metadata
+            elif re.search('columns', json_metadata.lower()):
+                json_column=json_metadata
+            else:
+                json_kpi_key=json_metadata   
+        actual_display={}
+        print(f" The Actual KPI shown {json_response}")
+        for data in json_response[json_header]:
+            if len(data[json_column])>1:
+                actual_display[data[json_kpi_key]]=','.join(data[json_column])
+        # remove all the charts from the directory and create new ones as per the AI
+        try:
+            output=-1
+            while output<0:
+                ai_chart_response=generate_chart(kpi_data=actual_display)
+                start_chart_ai=ai_chart_response.find('{')
+                end_chart_ai=ai_chart_response.rfind('}')
+                actual_chart_resp=json_response=json.loads(ai_chart_response[start_chart_ai:end_chart_ai+1])
+                print(f" The Actual chart shown {actual_chart_resp}")
+                output=get_charts_output(df=df,actual_resp=actual_chart_resp)
+        except Exception as e:
+            print(f"Got the below exception {str(e)}")
     files = os.listdir(charts_storage)
     html_files = []
     # Iterate through the files and add them to the list
@@ -186,8 +189,16 @@ def gen_bi(name):
         file_path = os.path.join(charts_storage, file_name)
         if os.path.isfile(file_path):
             html_files.append('charts_storage/'+file_name)
+    # from the below list of files get the filename and extract data about the json_kpi_key
+    # Check with gemini to provide some details about the chart
+    kpi_ai_list=[]
+    for file_path in html_files:
+        kpi_ai_list.append(file_path.replace("charts_storage/","").replace("_"," ").split(".")[0])
+    imp_kpi_list_display=generate_imp_kpi_info(kpi_ai_list)
     print(html_files)
-    return render_template('AiOnBi.html', kpi_response=actual_display, name=name,html_files=html_files)
+    end_time=timer()
+    print(end_time-start_time)
+    return render_template('AiOnBi.html', kpi_response=imp_kpi_list_display, name=name,html_files=html_files)
 
 
 if __name__=="__main__":

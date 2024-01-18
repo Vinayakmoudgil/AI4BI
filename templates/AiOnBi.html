@@ -21,21 +21,20 @@
             }
     
             .chart {
-                /* flex: 1; */
-                max-width: calc(40% - 10px); /* Adjust the width of each iframe */
-            }
-    
-            @media only screen and (max-width: 768px) {
-                .chart {
-                    max-width: calc(50% - 10px); /* Change to 2 columns on smaller screens */
+            flex: 1 0 calc(33.33% - 10px); /* Each chart takes up one-third of the available space */
                 }
-            }
-    
-            @media only screen and (max-width: 480px) {
-                .chart {
-                    max-width: 100%; /* Change to 1 column on even smaller screens */
+
+                @media only screen and (max-width: 768px) {
+                    .chart {
+                        max-width: calc(50% - 10px); /* Change to 2 columns on smaller screens */
+                    }
                 }
-            }
+
+                @media only screen and (max-width: 480px) {
+                    .chart {
+                        max-width: 100%; /* Change to 1 column on even smaller screens */
+                    }
+                }
         </style>
 		<title> AI4BI </title>
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>			 
@@ -43,6 +42,7 @@
 	<body>
         <a href="{{ url_for('upload_file') }}" class="button">Go to Homepage</a>
         <h4>Insights for file {{name}}.</h1>
+        <h4>Below is the list of most Important KPT's which can be targetted:</h4>
 		<div align="left"> 
 			<ol> 
                 <!-- For loop logic of jinja template -->

@@ -23,7 +23,7 @@
 
     input[type="file"] {
       top: 3px;
-      left: 11px;
+      left: 20px;
       color: #b8b8b8;
     }
 
@@ -70,8 +70,8 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
         <form method="post" enctype="multipart/form-data">
             <div class="button-wrap">
-              <label class="button" for="upload">Upload File</label>
-              <input id="upload" type="file" name="file">
+              <label class="button" for="upload">Upload File<input id="upload" type="file" name="file"></label>
+              
             </div>
             <div class="button-wrap">
                 <input type="submit" value="Submit">

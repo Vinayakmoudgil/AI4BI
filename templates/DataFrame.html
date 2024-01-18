@@ -12,7 +12,6 @@
         </style>
     </head> 
     <body>
-        {{ table|safe }}
         <a href="{{ url_for('upload_file') }}" class="button">Go to Homepage</a>
         <h2>File {{name}} uploaded successfully.</h2>
         <h5>The file is {{file_type}} separated file.</h5>
@@ -21,15 +20,11 @@
         
         <!-- Wrap the table in a scrollable container -->
         <div align="center" class="table-container"> 
-            <table> 
-                <tr> 
                     <!-- Displaying the converted table -->
                     {% for table in tables %} 
                         <td>{{ titles[loop.index] }}</td>							 
                         {{ table|safe }} 
-                    {% endfor %}	 
-                </tr> 
-            </table> 
+                    {% endfor %}	
         </div> 
     </body> 
 </html>
