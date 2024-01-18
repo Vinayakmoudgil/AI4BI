@@ -9,3 +9,8 @@ The sample files for testing are present in the Sample folder.
 3. Add the paths in the config.ini file where all the charts and sample files will be stored
 4. Run the app with below command: 
 ```python app.py```
+
+## UI snapshot
+<img width="960" alt="image" src="https://github.com/Vinayakmoudgil/AI4BI/assets/68346310/2bdff023-b66f-48ec-a782-c6f847911970">
+
+
