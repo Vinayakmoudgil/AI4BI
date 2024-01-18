@@ -1,0 +1,89 @@
+body,
+html {
+    margin: auto;
+    font-family: sans-serif;
+    background-image: url("ai_light_background.avif");
+    background-color: rgb(51, 204, 255);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+div.content form {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+}
+
+.textbox1 {
+    background-color: rgb(159, 214, 209);
+    width: 100%;
+    height: 50px;
+    border-radius: 5px;
+    border-width: 2px;
+}
+
+h1 {
+    color: rgb(114, 18, 165);
+    font-size: 60px;
+    text-align: center;
+    margin-top: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+h2 {
+    color: rgb(114, 18, 165);
+    font-size: 30px;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+h4 {
+    font-size: 20px;
+    text-align: center;
+    margin-top: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+h5 {
+    font-size: 15px;
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+
+table,
+td {
+  color: black; /* Set the text color to black */
+  padding: 8px;
+  border: 1px solid #120404; /* Optional: Add a border for table cells */
+  font-size: 12px;
+}
+
+th {
+    border: 2px solid rgb(19, 4, 27); /* Set the border color */
+    border-collapse: collapse;
+    width: min-content;
+    font-size: 12px;
+}
+
+table {
+    width: 40%;
+}
+
+/* Set the background color for table rows */
+tr {
+    background-color: #c98989;
+}
+
+/* Optional: Add styles for table headers */
+th {
+    background-color: #ddd;
+    padding: 12px;
+    text-align: left;
+}

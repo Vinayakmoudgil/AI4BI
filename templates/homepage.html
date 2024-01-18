@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<head>
+    <title>AI4BI</title>
+    <link rel="icon" href="icon.ico" type="image/x-icon">
+</head>
+
+<style>
+    .container {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      width: 100%;
+    }
+
+    input[type="file"],
+    input[type="submit"] {
+      position: absolute;
+      z-index: -1;
+      font-size: 17px;
+    }
+
+    input[type="file"] {
+      top: 3px;
+      left: 20px;
+      color: #b8b8b8;
+    }
+
+    input[type="submit"] {
+      top: 30px;
+      left: 18px;
+      font-weight: bold;
+      color: #140505;
+      background-color: #4CAF50;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    .button-wrap {
+      position: relative;
+      margin-top: 20px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 7px 20px;
+      cursor: pointer;
+      border-radius: 10px;
+      background-color: #3f4093;
+      font-size: 16px;
+      color: #fff;
+    }
+</style>
+{% endblock %}
+    
+    
+{% block body %}
+<h1 style="text-align: center">AI4BI</h1>
+<h4 style="text-align: center">Upload a file to get insights</h4>
+
+<div class="content">
+    <div class="form">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <form method="post" enctype="multipart/form-data">
+            <div class="button-wrap">
+              <label class="button" for="upload">Upload File<input id="upload" type="file" name="file"></label>
+              
+            </div>
+            <div class="button-wrap">
+                <input type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
