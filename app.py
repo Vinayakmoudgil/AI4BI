@@ -9,11 +9,13 @@ import re
 from charts import bar_chart, line_chart, scatter_chart
 
 
-file_storage_folder='/Users/vinayakmoudgil/Documents/my_work/Projects_vinni/AI4BI_check/file_storage'
-file_chunck_path='/Users/vinayakmoudgil/Documents/my_work/Projects_vinni/AI4BI_check/file_storage/file_chunk'
+file_storage_folder='C:/workdir/Practice_laptop_accion_2/Practice/rough/rough8/AI4BI/file_storage'
+file_chunck_path='C:/workdir/Practice_laptop_accion_2/Practice/rough/rough8/AI4BI/file_storage/file_chunk'
 ALLOWED_EXTENSIONS = {'txt', 'csv', 'xlsx'}
-charts_storage='/Users/vinayakmoudgil/Documents/my_work/Projects_vinni/AI4BI_check/static/charts_storage'
-charts_archive_storage='/Users/vinayakmoudgil/Documents/my_work/Projects_vinni/AI4BI_check/static/charts_archive'
+charts_storage='C:/workdir/Practice_laptop_accion_2/Practice/rough/rough8/AI4BI/static/charts_storage'
+charts_archive_storage='C:/workdir/Practice_laptop_accion_2/Practice/rough/rough8/AI4BI/static/charts_archive'
+
+
 def get_json_ai(ai_response,start_ai,end_ai):
     try:
         json.loads(ai_response[start_ai:end_ai+1])
@@ -22,6 +24,7 @@ def get_json_ai(ai_response,start_ai,end_ai):
         print(f"Got the below error while converting to JSON :{e}")
         return -1
         
+
 def get_charts_output(actual_resp,df):
   try:
     for i in actual_resp["metrics"]:
@@ -47,13 +50,16 @@ def get_charts_output(actual_resp,df):
   except Exception as e:
      print(f"Got the below exception {str(e)}")
      return -1
+
 def save_html_chart(chart, filename):
     # Save the HTML representation of the chart to a file
     with open(os.path.join(charts_storage, filename), 'w') as file:
         file.write(chart.to_html(full_html=False))  
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def get_all_keys(json_data):
     keys = set()
@@ -67,6 +73,7 @@ def get_all_keys(json_data):
             keys.update(get_all_keys(item))
 
     return keys
+
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = file_storage_folder
 
@@ -75,6 +82,7 @@ app.config['UPLOAD_FOLDER'] = file_storage_folder
 def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
+        print(request.files)
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -89,15 +97,7 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             print(url_for('DfViewer',name=filename))
             return redirect(url_for('DfViewer',name=filename))
-    return '''
-    <!doctype html>
-    <title>AI4BI</title>
-    <h1>Upload a file to get Business.</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
+    return render_template('homepage.html')
 
 @app.route('/DfViewer/<name>')
 def DfViewer(name):
@@ -127,8 +127,9 @@ def DfViewer(name):
         else:
             df=pd.read_csv(os.path.join(file_chunck_path,chunk_file_name),encoding=default_encoding)
     except UnicodeDecodeError as unerr:
+        print("sagar"*100)
         default_encoding='latin-1'
-        df=pd.read_csv(os.path.join(file_storage_folder,name),encoding=default_encoding)
+        df=pd.read_csv(os.path.join(file_storage_folder,name), encoding=default_encoding)
         
     return render_template('DataFrame.html', tables=[df.to_html()], name=name,file_type=file_type,default_encoding=default_encoding,titles=[''])
 
@@ -176,6 +177,7 @@ def gen_bi(name):
             output=get_charts_output(df=df,actual_resp=actual_chart_resp)
     except Exception as e:
         print(f"Got the below exception {str(e)}")
+        raise e
 
     files = os.listdir(charts_storage)
     html_files = []
@@ -186,3 +188,7 @@ def gen_bi(name):
             html_files.append('charts_storage/'+file_name)
     print(html_files)
     return render_template('AiOnBi.html', kpi_response=actual_display, name=name,html_files=html_files)
+
+
+if __name__=="__main__":
+    app.run(debug=True)
