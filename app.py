@@ -35,29 +35,29 @@ def get_charts_output(actual_resp,df):
             if i["aggregation_type"].upper()=='SUM':
               line_df=df.groupby(i["x_axis"])[i["aggregation_column"]].sum().reset_index()
               fig=line_chart(df_data=line_df,x_axis=i["x_axis"],y_axis=i["y_axis"],kpi_name=i["name"])
-              save_html_chart(fig, f'{i["name"].replace(" ","_")}.html')
+              fig.write_html( os.path.join(charts_storage,(f'{i["name"].replace(" ","_")}.html')))
             else:
               line_df=df.groupby(i["x_axis"])[i["aggregation_column"]].mean().reset_index()
               fig=line_chart(df_data=line_df,x_axis=i["x_axis"],y_axis=i["y_axis"],kpi_name=i["name"])
-              save_html_chart(fig, f'{i["name"].replace(" ","_")}.html')
+              fig.write_html( os.path.join(charts_storage,(f'{i["name"].replace(" ","_")}.html')))
         if i["chart_type"].lower()=='bar':
             if i["aggregation_type"].upper()=='SUM':
               bar_df=df.groupby(i["x_axis"])[i["aggregation_column"]].sum().reset_index()
               fig=bar_chart(df_data=bar_df,x_axis=i["x_axis"],y_axis=i["y_axis"],kpi_name=i["name"])
-              save_html_chart(fig, f'{i["name"].replace(" ","_")}.html')
+              fig.write_html( os.path.join(charts_storage,(f'{i["name"].replace(" ","_")}.html')))
             else:
               bar_df=df.groupby(i["x_axis"])[i["aggregation_column"]].mean().reset_index()
               fig=bar_chart(df_data=bar_df,x_axis=i["x_axis"],y_axis=i["y_axis"],kpi_name=i["name"])
-              save_html_chart(fig, f'{i["name"].replace(" ","_")}.html')
+              fig.write_html( os.path.join(charts_storage,(f'{i["name"].replace(" ","_")}.html')))
     return 0
   except Exception as e:
      print(f"Got the below exception {str(e)}")
      return -1
 
-def save_html_chart(chart, filename):
-    # Save the HTML representation of the chart to a file
-    with open(os.path.join(charts_storage, filename), 'w') as file:
-        file.write(chart.to_html(full_html=False))  
+# def save_html_chart(chart, filename):
+#     # Save the HTML representation of the chart to a file
+#     with open(os.path.join(charts_storage, filename), 'w') as file:
+#         file.write(chart.to_html(full_html=False))  
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -177,7 +177,7 @@ def gen_bi(name):
                 ai_chart_response=generate_chart(kpi_data=actual_display)
                 start_chart_ai=ai_chart_response.find('{')
                 end_chart_ai=ai_chart_response.rfind('}')
-                actual_chart_resp=json_response=json.loads(ai_chart_response[start_chart_ai:end_chart_ai+1])
+                actual_chart_resp=json.loads(ai_chart_response[start_chart_ai:end_chart_ai+1])
                 print(f" The Actual chart shown {actual_chart_resp}")
                 output=get_charts_output(df=df,actual_resp=actual_chart_resp)
         except Exception as e:

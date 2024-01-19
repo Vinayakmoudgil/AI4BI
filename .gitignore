@@ -143,3 +143,4 @@ cython_debug/
 charts_archive/
 charts_storage/
 file_chunk/
+file_storage/
